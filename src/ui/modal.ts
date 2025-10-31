@@ -69,6 +69,7 @@ export default function createModal(): Modal {
   const showBackdrop = async () => {
     await new Promise((resolve) => requestAnimationFrame(resolve));
 
+    document.body.style.overflow = "hidden";
     root.style.opacity = "1";
     root.style.pointerEvents = "auto";
 
@@ -82,6 +83,7 @@ export default function createModal(): Modal {
 
   const hideAll = async () => {
     document.removeEventListener("keydown", handleKeydown);
+    document.body.style.overflow = "";
 
     content.style.opacity = "0";
     root.style.opacity = "0";
@@ -94,6 +96,7 @@ export default function createModal(): Modal {
 
   const destroy = async () => {
     document.removeEventListener("keydown", handleKeydown);
+    document.body.style.overflow = "";
 
     if (root.parentNode) {
       document.body.removeChild(root);
