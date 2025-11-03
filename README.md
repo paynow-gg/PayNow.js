@@ -21,7 +21,7 @@ pnpm add @paynow-gg/paynow.js
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="WE_NEED_A_CDN"></script>
+  <script src="https://cdn.paynow.gg/paynow-js/bundle.js"></script>
 </head>
 <body>
   <button id="pay-button">Pay Now</button>
