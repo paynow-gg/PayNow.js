@@ -2,6 +2,12 @@
 
 The Embeddable PayNow.gg checkout experience!
 
+## Demo Integrations
+
+- [PayNow.js Demo](https://js.paynow.gg/)
+- [Limitless Rust Store](https://store.limitlessrust.com/)
+- [PayNow Headless Template](https://headless-template.paynow.gg/)
+
 ## Installation
 ```bash
 # npm
