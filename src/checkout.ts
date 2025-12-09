@@ -5,12 +5,17 @@ import { BASE_URL, DEFAULT_HEIGHT, DEFAULT_WIDTH } from "./constants";
 
 import createContainerTemplate from "./templates/container";
 import createPrerenderTemplate from "./templates/prerender";
-import createModal, { type Modal } from "./ui/modal";
+
+import createOverlay, { type Overlay } from "./ui/overlay";
 
 type CheckoutEvents = {
   ready: () => void;
   closed: () => void;
   completed: ({ orderId }: { orderId: string }) => void;
+};
+
+type RenderTo = {
+  element: HTMLElement;
 };
 
 export default class Checkout {
@@ -19,7 +24,7 @@ export default class Checkout {
   private zoid?: any;
   private zoidComponent?: any;
 
-  private modal?: Modal;
+  private overlay?: Overlay;
 
   private listeners: { [K in keyof CheckoutEvents]?: CheckoutEvents[K][] };
 
@@ -32,7 +37,15 @@ export default class Checkout {
 
   // State management
 
-  open({ token, baseURL }: { token: string; baseURL?: string }) {
+  open({
+    token,
+    baseURL,
+    renderTo,
+  }: {
+    token: string;
+    baseURL?: string;
+    renderTo?: RenderTo;
+  }) {
     if (this.isOpen) {
       throw new Error("A checkout is already open");
     }
@@ -43,17 +56,24 @@ export default class Checkout {
       return;
     }
 
+    if (renderTo?.element) {
+      const rect = renderTo?.element.getBoundingClientRect();
+
+      if (rect.width !== DEFAULT_WIDTH || rect.height !== DEFAULT_HEIGHT) {
+        throw new Error(`Element must be ${DEFAULT_WIDTH}x${DEFAULT_HEIGHT}px`);
+      }
+    }
+
     this.isOpen = true;
 
     this.ensureZoid();
-
-    this.modal = createModal();
 
     this.zoidComponent = this.zoid({
       token,
       baseURL,
       externalPageOpen: false,
-      onCompleted: ({ orderId }: { orderId: string }) => this.emit("completed", { orderId }),
+      onCompleted: ({ orderId }: { orderId: string }) =>
+        this.emit("completed", { orderId }),
     });
 
     this.zoidComponent.updateProps({
@@ -61,13 +81,14 @@ export default class Checkout {
       openExternalPage: this.openExternalPage.bind(this),
     });
 
-    this.modal.onClose(() => this.closeGracefully());
-    this.modal.showBackdrop();
+    this.overlay = createOverlay(renderTo?.element);
+    this.overlay.onClose(() => this.closeGracefully());
+    this.overlay.showBackdrop();
 
     this.zoidComponent
-      .renderTo(window, this.modal.content, "iframe")
+      .renderTo(window, this.overlay.content, "iframe")
       .then(async () => {
-        await this.modal?.showContent();
+        await this.overlay?.showContent();
 
         this.emit("ready");
       });
@@ -84,15 +105,15 @@ export default class Checkout {
       this.externalPageInterval = undefined;
     }
 
-    await this.modal?.hideAll();
+    await this.overlay?.hideAll();
     await this.zoidComponent?.close();
-    await this.modal?.destroy();
+    await this.overlay?.destroy();
 
     this.isOpen = false;
 
     this.emit("closed");
 
-    this.modal = undefined;
+    this.overlay = undefined;
     this.zoidComponent = undefined;
   }
 
