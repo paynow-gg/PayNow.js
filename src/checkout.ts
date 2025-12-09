@@ -60,8 +60,8 @@ export default class Checkout {
     if (renderTo?.element) {
       const rect = renderTo?.element.getBoundingClientRect();
 
-      if (rect.width !== DEFAULT_WIDTH || rect.height !== DEFAULT_HEIGHT) {
-        throw new Error(`Element must be ${DEFAULT_WIDTH}x${DEFAULT_HEIGHT}px`);
+      if (rect.width < DEFAULT_WIDTH || rect.height < DEFAULT_HEIGHT) {
+        throw new Error(`Element must be at least ${DEFAULT_WIDTH}x${DEFAULT_HEIGHT}px`);
       }
     }
 
