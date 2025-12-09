@@ -41,16 +41,18 @@ export default class Checkout {
     token,
     baseURL,
     renderTo,
+    disableRedirect = false,
   }: {
     token: string;
     baseURL?: string;
     renderTo?: RenderTo;
+    disableRedirect?: boolean
   }) {
     if (this.isOpen) {
       throw new Error("A checkout is already open");
     }
 
-    if (window.innerWidth < DEFAULT_WIDTH) {
+    if (window.innerWidth < DEFAULT_WIDTH && !disableRedirect) {
       console.log('Redirecting to checkout due to window.innerWidth < DEFAULT_WIDTH')
       window.location.href = `${baseURL ?? BASE_URL}/?t=${token}`;
 
