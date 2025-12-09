@@ -28,7 +28,7 @@ export default class Checkout {
 
   private listeners: { [K in keyof CheckoutEvents]?: CheckoutEvents[K][] };
 
-  private externalPageInterval?: number;
+  private externalPageInterval?: ReturnType<typeof setInterval>;
 
   constructor() {
     this.isOpen = false;
