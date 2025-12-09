@@ -50,7 +50,8 @@ export default class Checkout {
       throw new Error("A checkout is already open");
     }
 
-    if (window.innerWidth <= DEFAULT_WIDTH) {
+    if (window.innerWidth < DEFAULT_WIDTH) {
+      console.log('Redirecting to checkout due to window.innerWidth < DEFAULT_WIDTH')
       window.location.href = `${baseURL ?? BASE_URL}/?t=${token}`;
 
       return;
