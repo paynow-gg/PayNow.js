@@ -141,7 +141,7 @@ export default class Checkout {
 
       attributes: {
         iframe: {
-          allow: `payment ${BASE_URL}`,
+          allow: `payment ${BASE_URL}; clipboard-write ${BASE_URL}`,
         },
       },
 
