@@ -42,11 +42,13 @@ export default class Checkout {
     baseURL,
     renderTo,
     disableRedirect = false,
+    theme,
   }: {
     token: string;
     baseURL?: string;
     renderTo?: RenderTo;
     disableRedirect?: boolean
+    theme?: "auto" | "light" | "dark";
   }) {
     if (this.isOpen) {
       throw new Error("A checkout is already open");
@@ -77,6 +79,7 @@ export default class Checkout {
       externalPageOpen: false,
       onCompleted: ({ orderId }: { orderId: string }) =>
         this.emit("completed", { orderId }),
+      theme,
     });
 
     this.zoidComponent.updateProps({
@@ -163,6 +166,10 @@ export default class Checkout {
         onCompleted: {
           type: "function",
         },
+        theme: {
+          type: "string",
+          required: false,
+        }
       },
     });
   }
